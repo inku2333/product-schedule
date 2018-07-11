@@ -1,0 +1,101 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace text
+{
+    class Class1
+    {
+    static void Main(String []args)//获取产能算法测试
+        {
+            //构件
+            Component c1 = new Component();
+            c1.Floor = 1;
+            c1.Category = 1;
+            c1.Amount = 100;
+            Component c2 = new Component();
+            c2.Floor = 1;
+            c2.Category = 2;
+            c2.Amount = 100;
+            Component c3 = new Component();
+            c3.Floor = 1;
+            c3.Category = 3;
+            c3.Amount = 100;
+            List<Component> c = new List<Component>();
+            c.Add(c1);
+            c.Add(c2);
+            c.Add(c3);
+
+            //楼栋
+            Building b1 = new Building();
+            b1.ID = 1;
+            b1.Name = "楼栋一";
+            b1.Components = c;
+            b1.CompletedTime = DateTime.Now;
+            List<Building> b = new List<Building>();
+            b.Add(b1);
+
+            //项目
+            Project p1 = new Project();
+            p1.ID = 1;
+            p1.Name = "项目1";
+            p1.Buildings = b;
+            p1.CompletedTime = DateTime.Now;
+            List<Project> p = new List<Project>();
+            p.Add(p1);
+
+            //批次
+            BatchTask bt1 = new BatchTask();
+            bt1.ID = 1;
+            bt1.Name = "批次一";
+            bt1.Projects = p;
+            bt1.CompletedTime = DateTime.Now;
+
+            //流水节拍
+            FlowInterval F = new FlowInterval();
+            F.wWallBeat = 2;
+            F.wnWallBeat = 3;
+            F.nWallBeat = 2;
+            F.gwWallBeat = 3;
+            F.gnWallBeat = 3;
+            F.gWallBeat = 1;
+
+            F.wMouldAmount = 1000;
+            F.wMouldReturnTime = 0;
+            F.nMouldAmount = 1000;
+            F.nMouldReturnTime = 0;
+            F.gMouldAmount = 1000;
+            F.gMouldReturnTime = 0;
+
+            //约束
+            LimitedCondition L = new LimitedCondition();
+            L.Flowinterval = F;
+            L.SCXw = 3;
+            L.SCXn = 2;
+            L.SCXw = 2;
+            L.wWorkPositionAmount = 30;
+            L.nWorkPositionAmount = 28;
+            L.gWorkPositionAmount = 28;
+
+            //测试
+            Class1 text1 = new Class1();
+            double min=text1.min3(1276516.151234, 12515.1234, 74158617586.123451);
+            Console.WriteLine(min);
+            Console.ReadLine();
+        }
+        public double min3(double T1, double T2, double T3)//比较最小时间
+        {
+            double[] score = new double[3];
+            score[0] = T1;
+            score[1] = T2;
+            score[2] = T3;
+            double min = T1;
+            for (int i = 1; i < 3; i++)
+            {
+                if (score[i] < min)
+                    min = score[i];
+            }
+            return min;
+        }
+    }
+}

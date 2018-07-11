@@ -1,0 +1,91 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace text
+{
+    class Class1
+    {
+        static void Main(String []args)//获取构件算法测试
+        {
+            //构件
+            Component c1 = new Component();
+            c1.Floor = 1;
+            c1.Category = 1;
+            c1.Amount = 100;
+            Component c2 = new Component();
+            c2.Floor = 1;
+            c2.Category = 2;
+            c2.Amount = 100;
+            Component c3 = new Component();
+            c3.Floor = 1;
+            c3.Category = 3;
+            c3.Amount = 100;
+            List<Component> c = new List<Component>();
+            c.Add(c1);
+            c.Add(c2);
+            c.Add(c3);
+            //楼栋
+            Building b1 = new Building();
+            b1.ID = 1;
+            b1.Name = "楼栋一";
+            b1.Components = c;
+            b1.CompletedTime = DateTime.Now;
+            List<Building> b = new List<Building>();
+            b.Add(b1);
+            //项目
+            Project p1 = new Project();
+            p1.ID = 1;
+            p1.Name = "项目1";
+            p1.Buildings = b;
+            p1.CompletedTime = DateTime.Now;
+            List<Project> p = new List<Project>();
+            p.Add(p1);
+            //批次
+            BatchTask bt1 = new BatchTask();
+            bt1.ID = 1;
+            bt1.Name = "批次一";
+            bt1.Projects = p;
+            bt1.CompletedTime = DateTime.Now;
+            //测试
+            int downf = new int();
+            downf = 1;
+            int n = new int();
+            n = 1;
+            int pid = new int();
+            pid = 0;
+            int bid = new int();
+            bid = 0;
+            Class1 text1 = new Class1();
+            int sum;
+            sum = text1.GJHQ(downf, n, bt1, pid, bid).Length;
+            for(int temp=0;temp<sum;temp++)
+            {
+                Console.WriteLine(text1.GJHQ(downf, n, bt1, pid, bid)[temp]);
+            }
+            Console.ReadLine();
+        }
+        public double[] GJHQ(int downf, int n, BatchTask B, int pid, int bid)//获取构件算法
+        {
+            double[] GJ = new double[3]; //构件数组
+            GJ[0] = 0;
+            GJ[1] = 0;
+            GJ[2] = 0;
+            int ci = B.Projects[pid].Buildings[bid].Components.Count;
+            int upf = downf + n - 1;
+            for (int i = 0; i < ci; i++)
+            {
+                if (downf <= B.Projects[pid].Buildings[bid].Components[i].Floor && B.Projects[pid].Buildings[bid].Components[i].Floor <= upf)
+                {
+                    if (B.Projects[pid].Buildings[bid].Components[i].Category == 1)
+                    { GJ[0] = GJ[0] + 1; }
+                    if (B.Projects[pid].Buildings[bid].Components[i].Category == 2)
+                    { GJ[1] = GJ[1] + 1; }
+                    if (B.Projects[pid].Buildings[bid].Components[i].Category == 3)
+                    { GJ[2] = GJ[2] + 1; }
+                }
+            }
+            return GJ;
+        }
+    }
+}

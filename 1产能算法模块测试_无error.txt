@@ -1,0 +1,168 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+
+namespace text
+{
+    class Class1
+    {
+    static void Main(String []args)//获取产能算法测试
+        {
+            //构件
+            Component c1 = new Component();
+            c1.Floor = 1;
+            c1.Category = 1;
+            c1.Amount = 100;
+            Component c2 = new Component();
+            c2.Floor = 1;
+            c2.Category = 2;
+            c2.Amount = 100;
+            Component c3 = new Component();
+            c3.Floor = 1;
+            c3.Category = 3;
+            c3.Amount = 100;
+            List<Component> c = new List<Component>();
+            c.Add(c1);
+            c.Add(c2);
+            c.Add(c3);
+
+            //楼栋
+            Building b1 = new Building();
+            b1.ID = 1;
+            b1.Name = "楼栋一";
+            b1.Components = c;
+            b1.CompletedTime = DateTime.Now;
+            List<Building> b = new List<Building>();
+            b.Add(b1);
+
+            //项目
+            Project p1 = new Project();
+            p1.ID = 1;
+            p1.Name = "项目1";
+            p1.Buildings = b;
+            p1.CompletedTime = DateTime.Now;
+            List<Project> p = new List<Project>();
+            p.Add(p1);
+
+            //批次
+            BatchTask bt1 = new BatchTask();
+            bt1.ID = 1;
+            bt1.Name = "批次一";
+            bt1.Projects = p;
+            bt1.CompletedTime = DateTime.Now;
+
+            //流水节拍
+            FlowInterval F = new FlowInterval();
+            F.wWallBeat = 2;
+            F.wnWallBeat = 3;
+            F.nWallBeat = 2;
+            F.gwWallBeat = 3;
+            F.gnWallBeat = 3;
+            F.gWallBeat = 1;
+
+            F.wMouldAmount = 1000;
+            F.wMouldReturnTime = 0;
+            F.nMouldAmount = 1000;
+            F.nMouldReturnTime = 0;
+            F.gMouldAmount = 1000;
+            F.gMouldReturnTime = 0;
+
+            //约束
+            LimitedCondition L = new LimitedCondition();
+            L.Flowinterval = F;
+            L.SCXw = 3;
+            L.SCXn = 2;
+            L.SCXw = 2;
+            L.wWorkPositionAmount = 30;
+            L.nWorkPositionAmount = 28;
+            L.gWorkPositionAmount = 28;
+
+            //测试
+            Class1 text1 = new Class1();
+            int length = text1.CNSF(L).Length;
+            for(int id=0;id<length;id++)
+            {
+                Console.WriteLine(text1.CNSF(L)[id]);
+            }
+            Console.ReadLine();
+        }
+        public double[] CNSF(LimitedCondition L)//产能算法
+        {
+
+            double wjp = L.Flowinterval.wWallBeat;//节拍，单位小时
+            double wnjp = L.Flowinterval.wnWallBeat;
+            double njp = L.Flowinterval.nWallBeat;
+            double gjp = L.Flowinterval.gWallBeat;
+            double gwjp = L.Flowinterval.gwWallBeat;
+            double gnjp = L.Flowinterval.gnWallBeat;
+            int wm = L.Flowinterval.wMouldAmount;//w模具数量
+            int nm = L.Flowinterval.nMouldAmount;
+            int gm = L.Flowinterval.gMouldAmount;
+            double wf = L.Flowinterval.wMouldReturnTime;//w模具返回时间
+            double nf = L.Flowinterval.nMouldReturnTime;
+            double gf = L.Flowinterval.gMouldReturnTime;
+            int wnsum = L.wWorkPositionAmount;//w工位数量
+            int nnsum = L.nWorkPositionAmount;
+            int gnsum = L.gWorkPositionAmount;
+            double ts = L.TimeSlot;//时间间隙，单位小时
+
+            int wone = (int)(wnsum * (ts + wjp));
+            int none = (int)(nnsum * (ts + njp));
+            int gone = (int)(gnsum * (ts + gjp));
+
+            double[] jp = new double[6];//节拍
+            jp[0] = wjp;
+            jp[1] = wnjp;
+            jp[2] = njp;
+            jp[3] = gjp;
+            jp[4] = gwjp;
+            jp[5] = gnjp;
+
+            int[] msum = new int[6];//模具总数
+            msum[0] = wm;
+            msum[1] = wm;
+            msum[2] = nm;
+            msum[3] = gm;
+            msum[4] = gm;
+            msum[5] = gm;
+
+            double[] mf = new double[6];//返回时间
+            mf[0] = wf;
+            mf[1] = wf;
+            mf[2] = nf;
+            mf[3] = gf;
+            mf[4] = gf;
+            mf[5] = gf;
+
+            int[] gsum = new int[6];//工位数量
+            gsum[0] = wnsum;
+            gsum[1] = wnsum;
+            gsum[2] = nnsum;
+            gsum[3] = gnsum;
+            gsum[4] = gnsum;
+            gsum[5] = gnsum;
+
+            double[] PP = new double[6];
+
+            int sfi = 0;
+            for (; sfi < 6; sfi++)
+            {
+                if (msum[sfi] > gsum[sfi] && mf[sfi] < jp[sfi])
+                {
+                    PP[sfi] = 1 / (jp[sfi] + ts);//时产能
+                }
+                if (msum[sfi] > gsum[sfi] && mf[sfi] > jp[sfi])
+                {
+                    int k0;
+                    k0 = (int)(mf[sfi] / (jp[sfi] + ts)) + 1;
+                    PP[sfi] = (msum[sfi] / (msum[sfi] + k0)) * 1 / (jp[sfi] + ts);//时产能
+                }
+                if (msum[sfi] < gsum[sfi])
+                {
+                    PP[sfi] = (msum[sfi] * 1) / (gsum[sfi] * (jp[sfi] + ts));//时产能
+                }
+            }
+            return PP;
+        }
+    }
+}
