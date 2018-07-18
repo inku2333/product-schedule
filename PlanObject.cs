@@ -15,6 +15,7 @@ namespace text
         public string ComponentType { get; set; }      // 构件种类
         public string ComponentID { get; set; }        // 构件ID号
         public string FlowLineNumber { get; set; }     // 流水线号
+        public int WorkPositionAmount { get; set; }    //工位数量
         public DateTime ActualStartTime { get; set; }  // 排产实际开始时间
         public DateTime ActualEndTime { get; set; }    // 排产实际完成时间
     }
